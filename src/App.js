@@ -1,21 +1,35 @@
 import React, { Component } from 'react';
+import UUID from 'uuid';
 import {API_KEY} from './Secrets.js'
 
 class App extends Component {
-  state = {data: null}
+  state = {dataset: null}
 
   componentDidMount = () => {
-    console.log(API_KEY)
     fetch("https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key="+API_KEY)
-    .then(data => data.json())
-    .then(data => this.setState({data}))
+    .then(res => res.json())
+    .then(res => this.setState({dataset: res.dataset_data}))
+  }
+
+  renderRows = () => {
+    return (
+      <table><tbody>{[
+        <tr key={UUID()}>
+          {this.state.dataset.column_names.map(colName => {
+            return <td key={UUID()}>{colName}</td>
+          })}
+        </tr >, 
+        ...this.state.dataset.data.map(row => {
+          return <tr key={UUID()}>{row.map(colval => <td key={UUID()}>{colval}</td>)}</tr>
+        })
+      ]}</tbody></table>
+    )
   }
 
   render() {
-    console.log(this.state.data)
     return (
       <div className="App">
-      {JSON.stringify(this.state.data)}
+        {this.state.dataset ? this.renderRows() : null}
       </div>
     );
   }

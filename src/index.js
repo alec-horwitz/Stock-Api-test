@@ -2,4 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const tickers = ["FB", "GOOG", "AAPL", "HOG"]
+
+ReactDOM.render(<App tickers={tickers} />, document.getElementById('root'));

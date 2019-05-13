@@ -3,33 +3,54 @@ import UUID from 'uuid';
 import {API_KEY} from './Secrets.js'
 
 class App extends Component {
-  state = {dataset: null}
+  state = {
+    data: null
+  }
 
   componentDidMount = () => {
-    fetch("https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key="+API_KEY)
-    .then(res => res.json())
-    .then(res => this.setState({dataset: res.dataset_data}))
+    this.getData(this.props.tickers)
+  }
+
+  getData = (tickers, i=0, data={}) => {
+    if (i < Object.keys(tickers).length) {
+      fetch("https://www.quandl.com/api/v3/datasets/WIKI/"+tickers[i]+"/data.json?api_key="+API_KEY)
+      .then(res => res.json())
+      .then(res => {
+        data[tickers[i]] = res.dataset_data.data[0][4]
+        this.getData(tickers, i+1,data)
+      })
+    }
+    else {
+      this.setState({data})
+    }
   }
 
   renderRows = () => {
     return (
-      <table><tbody>{[
+      <table><tbody>
         <tr key={UUID()}>
-          {this.state.dataset.column_names.map(colName => {
-            return <td key={UUID()}>{colName}</td>
-          })}
-        </tr >, 
-        ...this.state.dataset.data.map(row => {
-          return <tr key={UUID()}>{row.map(colval => <td key={UUID()}>{colval}</td>)}</tr>
-        })
-      ]}</tbody></table>
+          {
+            Object.keys(this.state.data).map(key => {
+              return <td key={UUID()}>{key}</td>
+            })
+          }
+        </tr >  
+        <tr key={UUID()}>
+          {
+            Object.keys(this.state.data).map(key => {
+              return <td key={UUID()}>{this.state.data[key]}</td>
+            })
+          }
+        </tr>
+      </tbody></table>
     )
   }
 
   render() {
     return (
       <div className="App">
-        {this.state.dataset ? this.renderRows() : null}
+        <h1>Closing Prices</h1>
+        {this.state.data ? this.renderRows() : "loading data..."}
       </div>
     );
   }

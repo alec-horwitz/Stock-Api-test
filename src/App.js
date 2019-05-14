@@ -11,13 +11,13 @@ class App extends Component {
     this.getData(this.props.tickers)
   }
 
-  getData = (tickers, i=0, data={}) => {
+  getData = (tickers, data={}, i=0) => {
     if (i < Object.keys(tickers).length) {
       fetch("https://www.quandl.com/api/v3/datasets/WIKI/"+tickers[i]+"/data.json?api_key="+API_KEY)
       .then(res => res.json())
       .then(res => {
-        data[tickers[i]] = res.dataset_data.data[0][4]
-        this.getData(tickers, i+1,data)
+        data[tickers[i]] = res.dataset_data.data
+        this.getData(tickers, data, i+1)
       })
     }
     else {
@@ -38,7 +38,7 @@ class App extends Component {
         <tr key={UUID()}>
           {
             Object.keys(this.state.data).map(key => {
-              return <td key={UUID()}>{this.state.data[key]}</td>
+              return <td key={UUID()}>{this.state.data[key][0][4]}</td>
             })
           }
         </tr>

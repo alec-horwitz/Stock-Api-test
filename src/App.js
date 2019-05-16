@@ -11,22 +11,16 @@ const sampleGraphs = [
       {
         id:0, 
         ticker: "GOOG",
-        revenue: 14584,
-        price: null,
         visible:true
       },
       {
         id:1, 
         ticker: "HOG",
-        revenue: 23577,
-        price: null, 
         visible:false
       },
       {
         id:2, 
         ticker: "TXN",
-        revenue: 53434,
-        price: null, 
         visible:false
       },
     ]
@@ -39,22 +33,16 @@ const sampleGraphs = [
       {
         id:0, 
         ticker: "HPQ",
-        revenue: 47083,
-        price: null, 
         visible:false
       },
       {
         id:1, 
         ticker: "INTC",
-        revenue: 38292,
-        price: null, 
         visible:true
       },
       {
         id:2, 
         ticker: "BRK_A",
-        revenue: 29769,
-        price: null, 
         visible:false
       },
     ]
@@ -67,22 +55,16 @@ const sampleGraphs = [
       {
         id:0, 
         ticker: "WMT",
-        revenue: 19875,
-        price: null, 
         visible:false
       },
       {
         id:1, 
         ticker: "MSFT",
-        revenue: 35857,
-        price: null, 
         visible:false
       },
       {
         id:2, 
         ticker: "TGT",
-        revenue: 18759,
-        price: null, 
         visible:true
       },
     ]
@@ -105,7 +87,7 @@ class App extends Component {
         fetch("https://www.quandl.com/api/v3/datasets/WIKI/"+graphs[i].stocks[j].ticker+"/data.json?api_key="+API_KEY)
         .then(res => res.json())
         .then(res => {
-          graphs[i].stocks[j].price = res.dataset_data.data[0][4]
+          graphs[i].stocks[j].dataset = res.dataset_data.data
           this.getData(graphs, i, j+1)
         })
       } else {
@@ -136,7 +118,7 @@ class App extends Component {
         <tr key={UUID()}>
           {
             stocks.map(stock => {
-              return <td key={UUID()}>{stock.price}</td>
+              return <td key={UUID()}>{stock.dataset[0][4]}</td>
             })
           }
         </tr>
@@ -145,6 +127,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.data)
     return (
       <div className="App">
         <h1>Closing Prices</h1>
